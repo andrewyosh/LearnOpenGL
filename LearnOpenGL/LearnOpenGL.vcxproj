@@ -19,8 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Downloads\glad\src\glad.c" />
+    <ClCompile Include="..\..\..\Downloads\glad.c" />
     <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FragmentShader.frag" />
+    <None Include="VertexShader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -75,8 +82,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\coola\Documents\LearnOpenGLDependencies\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\coola\Documents\LearnOpenGLDependencies\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\19856\Documents\LearnOpenGLDependencies\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\19856\Documents\LearnOpenGLDependencies\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
