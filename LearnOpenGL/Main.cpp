@@ -4,6 +4,9 @@
 #include <iostream>
 #include "Shader.h"
 #include "stb_image.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 const unsigned int width = 800;
 const unsigned int height = 600;
@@ -43,7 +46,7 @@ void InitWindow()
 
 }
 
-unsigned int CreateTriangle(float vertices[], int verticesSize, int indices[], int indicesSize) {
+unsigned int CreateVAO(float vertices[], int verticesSize, int indices[], int indicesSize) {
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -52,7 +55,7 @@ unsigned int CreateTriangle(float vertices[], int verticesSize, int indices[], i
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
-
+	//indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
 	// position
@@ -176,10 +179,10 @@ int main() {
 	ourShader.use(); // don't forget to activate the shader before setting uniforms!  
 
 	unsigned int texture1 = LoadTexture("container.jpg", false, false);
-	ourShader.setInt("texture1", 0); // or with shader class
+	ourShader.setInt("texture1", 0); 
 
 	unsigned int texture2 = LoadTexture("awesomeface.png", true, true);
-	ourShader.setInt("texture2", 1); // or with shader class
+	ourShader.setInt("texture2", 1); 
 
 	// bind textures on corresponding texture units
 	glActiveTexture(GL_TEXTURE0);
@@ -196,24 +199,43 @@ int main() {
 	};
 
 	int indices[] = {  // CCW Winding Order
-		3,2,1, //first triangle
-		1,0,3
+		3,2,1, // First triangle
+		1,0,3  // Second triangle
 	};
 
 
-	unsigned int triangleVAO = CreateTriangle(vertices, sizeof(vertices), indices, sizeof(indices));
+	unsigned int squareVAO = CreateVAO(vertices, sizeof(vertices), indices, sizeof(indices));
 
 	while (!glfwWindowShouldClose(window)) {
 		// Rendering
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		ourShader.setFloat("mixValue", mixValue); // updated every frame
+		ourShader.setFloat("mixValue", mixValue); 
 		ourShader.setFloat("texCoordScale", texCoordScale);
 		ourShader.setFloat("texCoordScrollX", texCoordScrollX);
 		ourShader.setFloat("texCoordScrollY", texCoordScrollY);
 
-		glBindVertexArray(triangleVAO);
+		glm::mat4 squareTransformation = glm::mat4(1.0f);
+		squareTransformation = glm::translate(squareTransformation, glm::vec3(.5, 0, 0));
+		squareTransformation = glm::rotate(squareTransformation, (float)glfwGetTime(), glm::vec3(0.0, 0.0, 1.0));
+		squareTransformation = glm::scale(squareTransformation, glm::vec3(0.5, 0.5, 0.5));
+
+		unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(squareTransformation));
+
+		glBindVertexArray(squareVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+		glm::mat4 squareTransformation2 = glm::mat4(1.0f);
+		squareTransformation2 = glm::translate(squareTransformation2, glm::vec3(-.5f, 0, 0));
+		squareTransformation2 = glm::rotate(squareTransformation2, -(float)glfwGetTime(), glm::vec3(0.0, 0.0, 1.0));
+		squareTransformation2 = glm::scale(squareTransformation2, glm::vec3(0.5, 0.5, 0.5));
+
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(squareTransformation2));
+
+		glBindVertexArray(squareVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// Check and call events and swap the buffers
