@@ -234,8 +234,6 @@ int main() {
 		squareTransformation2 = glm::scale(squareTransformation2, glm::vec3(0.5, 0.5, 0.5));
 
 		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(squareTransformation2));
-
-		glBindVertexArray(squareVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// Check and call events and swap the buffers
